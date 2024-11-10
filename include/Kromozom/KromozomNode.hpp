@@ -5,7 +5,7 @@
 using namespace std;
 #include <fstream>
 #include <sstream>
-#include "../Gen/GenList.hpp"
+class GenList;
 
 class KromozomNode
 {
@@ -14,20 +14,9 @@ public:
 	KromozomNode *next;
 	KromozomNode *prev;
 
-	KromozomNode(KromozomNode *next = NULL, KromozomNode *prev = NULL)
-	{
-		this->genList = new GenList();
-		this->next = next;
-		this->prev = prev;
-	}
-	~KromozomNode()
-	{
-		delete genList;
-	}
-	GenList *getGeneList() const
-	{
-		return genList;
-	}
+	KromozomNode(KromozomNode *next = NULL, KromozomNode *prev = NULL);
+	~KromozomNode();
+	GenList *getGeneList() const;
 };
 
 #endif

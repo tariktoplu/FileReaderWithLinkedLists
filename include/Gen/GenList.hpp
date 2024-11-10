@@ -1,5 +1,5 @@
-#ifndef GEN_HPP
-#define GEN_HPP
+#ifndef GENLIST_HPP
+#define GENLIST_HPP
 
 #include "GenNode.hpp"
 #include "../Exceptions/Exception.hpp"
@@ -11,31 +11,31 @@ private:
     GenNode *head;
     int size;
 
-    GenNode *FindPreviousByPosition(int index);
+    GenNode *FindPreviousByPosition(int);
 
 public:
     GenList();
-    void Caprazlama(GenList *list1, GenList *list2, KromozomList &kromozomList);
-    GenList *rgtItr(GenList *list, int halflength) throw(NoSuchElement);
-    GenList *lftItr(GenList *list, int halflength) throw(NoSuchElement);
-    GenList *mergeLists(GenList &rgtList, GenList &lftList, GenList *sonListe) throw(NoSuchElement);
+    void Caprazlama(GenList *, GenList *, KromozomList &);
+    GenList *rgtItr(GenList *, int, GenList *) throw(NoSuchElement);
+    GenList *lftItr(GenList *, int, GenList *) throw(NoSuchElement);
+    GenList *mergeLists(GenList &, GenList &, GenList *) throw(NoSuchElement);
+    void yazdir();
     int Count() const;
     bool isEmpty() const;
-    void add(const char &item);
-    const char &getMiddleElement() throw(NoSuchElement);
-    void insert(int index, const char &item) throw(NoSuchElement);
+    void add(const char &);
+    void insert(int, const char &) throw(NoSuchElement);
     const char &first() throw(NoSuchElement);
     const char &last() throw(NoSuchElement);
-    int indexOf(const char &item) throw(NoSuchElement);
-    void remove(const char &item);
-    void removeAt(int index) throw(NoSuchElement);
-    bool find(const char &item);
-    const char &elementAt(int index) throw(NoSuchElement);
-    GenNode *FindGenNodeByPosition(int index) throw(NoSuchElement);
+    int indexOf(const char &) throw(NoSuchElement);
+    void remove(const char &);
+    void removeAt(int) throw(NoSuchElement);
+    bool find(const char &);
+    const char &elementAt(int) throw(NoSuchElement);
+    GenNode *FindGenNodeByPosition(int) throw(NoSuchElement);
     void clear();
-    friend ostream &operator<<(ostream &screen, GenList &rgt);
-    void printNodesFromPositionInReverseOrder(int index) throw(NoSuchElement);
-    void printNodesFromPositionInOrder(int index) throw(NoSuchElement);
+    friend ostream &operator<<(ostream &, GenList &);
+    void printNodesFromPositionInReverseOrder(int) throw(NoSuchElement);
+    void printNodes() throw(NoSuchElement);
     void printReverseOrder();
     ~GenList();
 };

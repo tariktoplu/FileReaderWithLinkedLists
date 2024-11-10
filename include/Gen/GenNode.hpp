@@ -10,12 +10,7 @@ public:
     GenNode *next;
     GenNode *prev;
 
-    GenNode(const char data, GenNode *next = NULL, GenNode *prev = NULL)
-    {
-        this->data = data;
-        this->next = next;
-        this->prev = prev;
-    }
+    GenNode(const char, GenNode *next = NULL, GenNode *prev = NULL);
 };
 
 #endif

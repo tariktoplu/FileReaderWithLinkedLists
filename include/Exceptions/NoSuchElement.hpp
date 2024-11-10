@@ -3,8 +3,9 @@
 
 #include "Exception.hpp"
 
-class NoSuchElement : public Exception{
-	public:
-		NoSuchElement(const string &msg):Exception(msg) { }
+class NoSuchElement : public Exception
+{
+public:
+	NoSuchElement(const string &msg) : Exception(msg) {}
 };
 #endif

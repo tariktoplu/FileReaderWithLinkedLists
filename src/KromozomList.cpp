@@ -1,7 +1,86 @@
-#ifndef KROMOZOMLIST_CPP
-#define KROMOZOMLIST_CPP
 
-#include "../Kromozom/KromozomList.hpp"
+/* caprazlama düzenlenecek */
+#include "../include/Kromozom/KromozomList.hpp"
+#include "../include/Gen/GenList.hpp"
+
+KromozomList::KromozomList() : head(nullptr),
+                               quarterNode(nullptr), midNode(nullptr),
+                               threeQuarterNode(nullptr), size(0)
+{
+    updateReferencePoints();
+}
+
+void KromozomList::processCommands(KromozomList &kromozomlar)
+{
+    ifstream islemlerFile("Islemler.txt");
+
+    if (!islemlerFile.is_open())
+    {
+        cout << "Islemler.txt dosyası açılamadı!" << endl;
+        return;
+    }
+
+    string line;
+    while (getline(islemlerFile, line))
+    {
+        istringstream iss(line);
+        char command;
+        int index1, index2;
+
+        // Komut karakterini oku
+        if (!(iss >> command))
+        {
+            continue; // Eğer komut okunamazsa, bu satırı atla
+        }
+
+        // Komut karakterine göre işlemleri yap
+        if (command == 'C' || command == 'c')
+        {
+            // Çaprazlama komutu
+            if (iss >> index1 >> index2)
+            {
+                try
+                {
+                    kromozomlar.Caprazlama(index1, index2); // Caprazlama fonksiyonunu çağır
+                }
+                catch (const char *e)
+                {
+                    cout << "Hata: " << e << endl;
+                }
+            }
+            else
+            {
+                cout << "Geçersiz C komutu: " << line << endl;
+            }
+        }
+        else if (command == 'M' || command == 'm')
+        {
+            // Mutasyon komutu
+            if (iss >> index1 >> index2)
+            {
+                try
+                {
+                    kromozomlar.Mutasyon(index1, index2); // Mutasyon fonksiyonunu çağır
+                }
+                catch (const char *e)
+                {
+                    cout << "Hata: " << e << endl;
+                }
+            }
+            else
+            {
+                cout << "Geçersiz M komutu: " << line << endl;
+            }
+        }
+        else
+        {
+            cout << "Geçersiz komut: " << command << endl;
+        }
+    }
+
+    islemlerFile.close();
+    cout << "İşlemler tamamlandı." << endl; // Dosyayı kapat
+}
 
 void KromozomList::updateReferencePoints()
 {
@@ -54,23 +133,33 @@ KromozomNode *KromozomList::FindPreviousByPosition(int index)
     return prv;
 }
 
-KromozomList::KromozomList() : head(nullptr),
-                               quarterNode(nullptr), midNode(nullptr),
-                               threeQuarterNode(nullptr), size(0) {}
+void KromozomList::yazdir()
+{
+    KromozomNode *current = head;
+    for (int i = 0; i < size; i++)
+    {
+        GenList *genList = current->genList;
+        genList->yazdir(); // GenList'in yazdırma fonksiyonunu çağır
+        current = current->next;
+    }
+}
 /* bu çaprazlama bitti gibi */
 void KromozomList::Caprazlama(int index1, int index2)
 {
-    if (index1 < 0 || index1 >= size || index2 < 0 || index2 >= size)
+    if (index1 < 0 || index1 > size || index2 < 0 || index2 > size)
     {
         throw NoSuchElement("Invalid index for crossover.");
     }
     /* satır 1 girilince noluyor denemek lazım */
-    KromozomNode *kromozom1 = FindKromNodeByPosition(index1);
-    KromozomNode *kromozom2 = FindKromNodeByPosition(index2);
+    KromozomNode *kromozom1 = FindFromNodeByPosition(index1);
+    KromozomNode *kromozom2 = FindFromNodeByPosition(index2);
 
+    if (kromozom1 == nullptr || kromozom2 == nullptr)
+    {
+        throw NoSuchElement("Kromozom not found.");
+    }
     GenList *genList1 = kromozom1->genList;
     GenList *genList2 = kromozom2->genList;
-
     genList1->Caprazlama(genList1, genList2, *this);
 }
 
@@ -92,16 +181,17 @@ GenNode *genNode = genList->FindNodeByPosition(index);
 genNode->data = 'X';
  */
 
+/* mutasyon blackboxtan duzenlenecek */
 void KromozomList::Mutasyon(int index, int column)
 {
-    if (index < 0 || column >= size)
+    if (index < 0 || index >= size)
     {
         throw NoSuchElement("Invalid kromozom index for mutation.");
     }
 
     // Kromozom düğümünü bul
-    KromozomNode *kromozomNode = FindKromNodeByPosition(index); // FindNodeByPosition kullanıldı
-    GenList *genList = kromozomNode->genList;                   /* Gen listesini çekti pointera */
+    KromozomNode *kromozomNode = FindFromNodeByPosition(index);
+    GenList *genList = kromozomNode->genList;
 
     if (column < 0 || column >= genList->Count())
     {
@@ -110,9 +200,11 @@ void KromozomList::Mutasyon(int index, int column)
 
     // Gen düğümünü bul ve mutasyon yap
     GenNode *genNode = genList->FindGenNodeByPosition(column); // column parametresi ile genNode'u buluyoruz
-    genNode->data = 'X';                                       // Geni mutasyona uğrat
-}
+    genNode->data = 'X';                                       // Geni mutasyona uğrat (örneğin, verisini 'X' olarak değiştir)
 
+    // Geni değiştirdikten sonra, gen listesini yazdır
+    genList->printNodes();
+}
 /* KromozomNode *FindNodeByPosition(int index)
 {
     if (index < 0 || index >= size)
@@ -182,7 +274,7 @@ void KromozomList::Mutasyon(int index, int column)
     return itr;
 } */
 
-KromozomNode *KromozomList::FindKromNodeByPosition(int index)
+KromozomNode *KromozomList::FindFromNodeByPosition(int index)
 {
     if (index < 0 || index >= size)
         throw NoSuchElement("No Such Element");
@@ -290,6 +382,11 @@ void KromozomList::add(GenList *genList) throw(NoSuchElement)
         head->prev = newNode;
     }
     size++;
+
+    if (size % 100 == 0)
+    {
+        updateReferencePoints();
+    }
 }
 
 void KromozomList::removeAt() throw(NoSuchElement)
@@ -329,5 +426,3 @@ KromozomList::~KromozomList()
 {
     clear();
 }
-
-#endif

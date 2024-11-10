@@ -4,11 +4,13 @@
 #include <iostream>
 using namespace std;
 
-class Exception{
-	private:
-		string message;
-	public:
-		Exception(const string &msg):message(msg) { }
-		string Message()const;
+class Exception
+{
+private:
+	string message;
+
+public:
+	Exception(const string &msg) : message(msg) {}
+	string Message() const;
 };
 #endif
