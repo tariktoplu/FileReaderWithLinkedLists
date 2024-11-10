@@ -1,4 +1,4 @@
-#include "../include/Kromozom/Exception.hpp"
+#include "../include/Exceptions/Exception.hpp"
 
 string Exception::Message() const
 {

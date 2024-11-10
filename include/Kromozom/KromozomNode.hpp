@@ -4,6 +4,7 @@
 #include <iostream>
 using namespace std;
 #include <fstream>
+#include <sstream>
 #include "../Gen/GenList.hpp"
 
 class KromozomNode
