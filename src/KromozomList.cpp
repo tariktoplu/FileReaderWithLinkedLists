@@ -142,15 +142,16 @@ void KromozomList::yazdir()
         genList->yazdir(); // GenList'in yazdırma fonksiyonunu çağır
         current = current->next;
     }
+    cout << endl;
 }
 /* bu çaprazlama bitti gibi */
 void KromozomList::Caprazlama(int index1, int index2)
 {
-    if (index1 < 0 || index1 > size || index2 < 0 || index2 > size)
+    if (index1 < 0 || index1 >= size || index2 < 0 || index2 >= size)
     {
         throw NoSuchElement("Invalid index for crossover.");
     }
-    /* satır 1 girilince noluyor denemek lazım */
+
     KromozomNode *kromozom1 = FindFromNodeByPosition(index1);
     KromozomNode *kromozom2 = FindFromNodeByPosition(index2);
 
@@ -158,9 +159,48 @@ void KromozomList::Caprazlama(int index1, int index2)
     {
         throw NoSuchElement("Kromozom not found.");
     }
+
     GenList *genList1 = kromozom1->genList;
     GenList *genList2 = kromozom2->genList;
-    genList1->Caprazlama(genList1, genList2, *this);
+
+    // İlk kromozomun orta noktası
+    int mid1 = genList1->Count() / 2;
+    // İkinci kromozomun orta noktası
+    int mid2 = genList2->Count() / 2;
+
+    // Yeni kromozomları oluştur
+    GenList *newGenList1 = new GenList();
+    GenList *newGenList2 = new GenList();
+
+    // Kromozom 1'in sol tarafı ve Kromozom 2'nin sağ tarafı
+    for (int i = 0; i < mid1; i++)
+    {
+        GenNode *node = genList1->FindGenNodeByPosition(i); // Kromozom 1'in baştan mid1'e kadar olan genleri
+        newGenList1->add(node->data);                       // Yeni gen listesine ekle
+    }
+    for (int i = mid2; i < genList2->Count(); i++)
+    {
+        GenNode *node = genList2->FindGenNodeByPosition(i); // Kromozom 2'nin mid2'den sona kadar olan genleri
+        newGenList1->add(node->data);                       // Yeni gen listesine ekle
+    }
+
+    // Kromozom 1'in sağ tarafı ve Kromozom 2'nin sol tarafı
+    for (int i = mid1; i < genList1->Count(); i++)
+    {
+        GenNode *node = genList1->FindGenNodeByPosition(i); // Kromozom 1'in mid1'den sona kadar olan genleri
+        newGenList2->add(node->data);                       // Yeni gen listesine ekle
+    }
+    for (int i = 0; i < mid2; i++)
+    {
+        GenNode *node = genList2->FindGenNodeByPosition(i); // Kromozom 2'nin baştan mid2'ye kadar olan genleri
+        newGenList2->add(node->data);                       // Yeni gen listesine ekle
+    }
+
+    // Yeni kromozomları popülasyona ekle
+    add(newGenList1);
+    add(newGenList2);
+    newGenList1->printNodes();
+    newGenList2->printNodes();
 }
 
 /* void Mutasyon(int index, int column)

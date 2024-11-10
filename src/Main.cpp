@@ -1,12 +1,13 @@
 #pragma GCC diagnostic ignored "-Wdeprecated"
 #include <cstdlib>
 #include <algorithm>
+
+#include <chrono> /* slincek */
 #include "../include/Kromozom/KromozomList.hpp"
 #include "../include/Gen/GenList.hpp"
 
 int main()
 {
-
 	KromozomList *kromozomlar = new KromozomList();
 	ifstream dnaFile("Dna.txt"); // Dna.txt dosyasını aç
 

@@ -8,6 +8,5 @@ derle:
 	g++ -I ./include/ -o ./lib/KromozomNode.o -c ./src/KromozomNode.cpp
 	g++ -I ./include/ -o ./lib/NoSuchElement.o -c ./src/NoSuchElement.cpp
 	g++ -I ./include/ -o ./bin/Main ./src/Main.cpp ./lib/*.o
-	
 calistir:
 	./bin/Main
