@@ -12,13 +12,14 @@ private:
     int size;
 
     GenNode *FindPreviousByPosition(int);
+    GenList *rgtItr(GenList *, int, GenList *) throw(NoSuchElement); /* 3 fonksiyon taşındı private */
+    GenList *lftItr(GenList *, int, GenList *) throw(NoSuchElement);
+    GenList *mergeLists(GenList &, GenList &, GenList *) throw(NoSuchElement);
 
 public:
     GenList();
     void Caprazlama(GenList *, GenList *, KromozomList &);
-    GenList *rgtItr(GenList *, int, GenList *) throw(NoSuchElement);
-    GenList *lftItr(GenList *, int, GenList *) throw(NoSuchElement);
-    GenList *mergeLists(GenList &, GenList &, GenList *) throw(NoSuchElement);
+
     void yazdir();
     int Count() const;
     bool isEmpty() const;

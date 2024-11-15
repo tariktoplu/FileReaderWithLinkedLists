@@ -429,28 +429,37 @@ void KromozomList::add(GenList *genList) throw(NoSuchElement)
     }
 }
 
-void KromozomList::removeAt() throw(NoSuchElement)
+void KromozomList::removeAt(int index) throw(NoSuchElement)
 {
+    if (index < 0 || index >= size)
+        throw NoSuchElement("No Such Element");
     KromozomNode *del;
-
-    del = head;
-    if (size == 1)
-        head = NULL;
+    if (index == 0)
+    {
+        del = head;
+        if (size == 1)
+            head = NULL;
+        else
+        {
+            head = head->next;
+            head->prev = del->prev;
+            del->prev->next = head;
+        }
+    }
     else
     {
-        head = head->next;
-        head->prev = del->prev;
-        del->prev->next = head;
+        KromozomNode *prv = FindPreviousByPosition(index);
+        del = prv->next;
+        prv->next = del->next;
+        del->next->prev = prv;
     }
-
     size--;
-    delete del->genList;
     delete del;
 }
 void KromozomList::clear()
 {
     while (!isEmpty())
-        removeAt();
+        removeAt(0);
 }
 ostream &operator<<(ostream &screen, KromozomList &rgt)
 {

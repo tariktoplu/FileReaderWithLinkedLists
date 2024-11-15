@@ -195,13 +195,13 @@ const char &GenList::first() throw(NoSuchElement)
     if (isEmpty())
         throw NoSuchElement("No Such Element");
     return head->data;
-}
-const char &GenList::last() throw(NoSuchElement)
-{
-    if (isEmpty())
-        throw NoSuchElement("No Such Element");
-    return head->prev->data;
-}
+} /* silincek hiç kullanılmamış
+ const char &GenList::last() throw(NoSuchElement)
+ {
+     if (isEmpty())
+         throw NoSuchElement("No Such Element");
+     return head->prev->data;
+ } */
 int GenList::indexOf(const char &item) throw(NoSuchElement)
 {
     int index = 0;
@@ -244,25 +244,26 @@ void GenList::removeAt(int index) throw(NoSuchElement)
     }
     size--;
     delete del;
-}
-bool GenList::find(const char &item)
-{
-    int index = 0;
-    for (GenNode *itr = head; index < size; itr = itr->next, index++)
-    {
-        if (itr->data == item)
-            return true;
-    }
-    return false;
-}
+} /* hiç kullanılmamış
+ bool GenList::find(const char &item)
+ {
+     int index = 0;
+     for (GenNode *itr = head; index < size; itr = itr->next, index++)
+     {
+         if (itr->data == item)
+             return true;
+     }
+     return false;
+ } */
+/*
 const char &GenList::elementAt(int index) throw(NoSuchElement)
 {
-    if (index < 0 || index >= size)
-        throw NoSuchElement("No Such Element");
-    if (index == 0)
-        return head->data;
-    return FindPreviousByPosition(index)->next->data;
-}
+if (index < 0 || index >= size)
+   throw NoSuchElement("No Such Element");
+if (index == 0)
+   return head->data;
+return FindPreviousByPosition(index)->next->data;
+} bu da kullanılmamış */
 
 GenNode *GenList::FindGenNodeByPosition(int index) throw(NoSuchElement)
 {

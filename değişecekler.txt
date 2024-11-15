@@ -1,0 +1,4 @@
+Islemler.txt deki işlemlerin yapılma hızı ve ekrana yazdırma hızı puanlamada önemli,
+bu yüzden dosyadan okuma hızı önemli
+
+her silme işleminde delete yapılıyor mu bak
