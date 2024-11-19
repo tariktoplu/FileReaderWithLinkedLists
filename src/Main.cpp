@@ -3,18 +3,20 @@
 #include <algorithm>
 #include "../include/Kromozom/KromozomList.hpp"
 #include "../include/Gen/GenList.hpp"
-
+#include <chrono>
+#include <memory>
 // Hata mesajını yazdır ve devam et
 void handleError(const string &errorMessage)
 {
 	cout << "Hata: " << errorMessage << endl;
 }
-
+/*eski fonk
 // Dosyadan KromozomList'e verileri okuma fonksiyonu
 int ReadFile(KromozomList *kromozomlar)
 {
 	try
 	{
+		auto start = std::chrono::high_resolution_clock::now();
 		ifstream dnaFile("Dna.txt"); // Dna.txt dosyasını aç
 
 		if (!dnaFile.is_open())
@@ -41,6 +43,11 @@ int ReadFile(KromozomList *kromozomlar)
 			kromozomlar->add(genList); // Oluşturulan GenList'i KromozomList'e ekle
 		}
 		dnaFile.close();
+		auto end = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double> duration = end - start;
+
+		// Okuma süresini ekrana yazdır
+		std::cout << "Dosya okuma süresi: " << duration.count() << " saniye\n";
 	}
 	catch (const exception &e)
 	{
@@ -48,8 +55,69 @@ int ReadFile(KromozomList *kromozomlar)
 		return 1; // Hata durumunda 1 döndür
 	}
 	return 0; // Başarılı bir şekilde okuma yapıldıysa 0 döndür
-}
+} */int ReadFile(KromozomList *kromozomlar)
+{
+	try
+	{
+		auto start = chrono::high_resolution_clock::now();
 
+		basic_filebuf<char> filebuf;
+		filebuf.open("Dna.txt", ios::in | ios::binary);
+
+		if (!filebuf.is_open())
+		{
+			handleError("Dosya açılamadı! Dosya mevcut mu ve doğru dizinde mi?");
+			return 1;
+		}
+
+		GenList *currentList = new GenList();
+
+		// Dosyayı karakter karakter işle
+		while (true)
+		{
+			int c = filebuf.sbumpc(); // Bir karakter oku
+
+			if (c == EOF)
+				break;
+
+			// Satır sonlarını ve boşluk karakterlerini atla
+			if (c == '\n' || c == '\r' || c == ' ' || c == '\t')
+			{
+				if (c == '\n' || c == '\r') // Yeni satır varsa listeyi ekle
+				{
+					kromozomlar->add(currentList);
+					currentList = new GenList(); // Yeni GenList başlat
+
+					// Windows'ta \r\n kontrolü
+					if (c == '\r' && filebuf.sgetc() == '\n')
+					{
+						filebuf.sbumpc(); // \n karakterini atla
+					}
+				}
+				continue;
+			}
+
+			// Geçerli karakteri listeye ekle
+			currentList->add(static_cast<char>(c));
+		}
+
+		// Son listeyi ekle
+		kromozomlar->add(currentList);
+
+		filebuf.close();
+
+		auto end = chrono::high_resolution_clock::now();
+		chrono::duration<double> duration = end - start;
+
+		cout << "Dosya okuma süresi: " << duration.count() << " saniye\n";
+	}
+	catch (const exception &e)
+	{
+		handleError(e.what());
+		return 1;
+	}
+	return 0;
+}
 // Kullanıcıdan seçim alma ve işlemleri gerçekleştirme fonksiyonu
 void handleUserChoice(KromozomList *kromozomlar)
 {

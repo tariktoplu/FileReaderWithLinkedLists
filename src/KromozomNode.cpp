@@ -6,11 +6,14 @@ KromozomNode::KromozomNode(KromozomNode *next, KromozomNode *prev)
     this->next = next;
     this->prev = prev;
 }
-KromozomNode::~KromozomNode()
-{
-    delete genList;
-}
+
 GenList *KromozomNode::getGeneList() const
 {
     return genList;
+}
+KromozomNode::~KromozomNode() /* burda hata var çünkü sadece 1 kere çalşıyor yıkıcı bi kaç kere çalışması lazım */
+
+{
+    cout << "KromozomNodedaki genlistler siliniyor. Bu 2 defa yazmalı" << endl;
+    delete genList;
 }

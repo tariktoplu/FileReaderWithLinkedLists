@@ -459,7 +459,10 @@ void KromozomList::removeAt(int index) throw(NoSuchElement)
 void KromozomList::clear()
 {
     while (!isEmpty())
+    {
+        cout << "KromozomList yıkıcısı calısıyor bu yazı her satır için yazdırılmalı" << endl;
         removeAt(0);
+    }
 }
 ostream &operator<<(ostream &screen, KromozomList &rgt)
 {

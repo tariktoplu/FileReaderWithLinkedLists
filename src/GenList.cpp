@@ -294,7 +294,10 @@ GenNode *GenList::FindGenNodeByPosition(int index) throw(NoSuchElement)
 void GenList::clear()
 {
     while (!isEmpty())
+    {
         removeAt(0);
+        cout << "GenList sınıfındaki yıkıcı calıstı tek tek siliniyor";
+    }
 }
 ostream &operator<<(ostream &screen, GenList &rgt)
 {
