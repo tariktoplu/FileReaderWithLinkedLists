@@ -31,7 +31,7 @@ public:
 	KromozomNode *FindFromNodeByPosition(int);
 	int Count() const;
 	bool isEmpty() const;
-	void add(GenList *) throw(NoSuchElement);
+	void add(const GenList &) throw(NoSuchElement);
 	void removeAt(int) throw(NoSuchElement);
 	void clear();
 	friend ostream &operator<<(ostream &, KromozomList &);

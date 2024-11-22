@@ -14,116 +14,141 @@ GenList::GenList()
 {
     head = NULL;
     size = 0;
-} // Caprazlama fonksiyonu bitti sanırım
-void GenList::Caprazlama(GenList *list1, GenList *list2, KromozomList &kromozomList)
-{
-    int orta1 = list1->Count() / 2;
-    int orta2 = list2->Count() / 2;
-    // Yeni GenList nesnelerini oluştur
-    GenList *yeniGenList1 = new GenList();
-    GenList *yeniGenList2 = new GenList();
-    // Listelerin yarılarını al
-    lftItr(list1, orta1, yeniGenList1); // List 1'in sol yarısını al
-    rgtItr(list2, orta2, yeniGenList1); // List 2'nin sağ yarısını al
-
-    rgtItr(list1, orta1, yeniGenList2); // List 1'in sağ yarısını al
-    lftItr(list2, orta2, yeniGenList2); // List 2'nin sol yarısını al
-
-    // İki yeni listeyi birleştir
-    GenList *sonListe1 = new GenList();
-    mergeLists(*yeniGenList1, *yeniGenList2, sonListe1);
-
-    GenList *sonListe2 = new GenList();
-    mergeLists(*yeniGenList1, *yeniGenList2, sonListe2);
-
-    // Sonuçları kromozomList'e ekle
-    kromozomList.add(sonListe1);
-    kromozomList.add(sonListe2);
-
-    // Sonuçları yazdır
-    cout << "yazdırma ya çalışmıyor ya da birleştirmelerde sıkıntı var";
-
-    sonListe1->printNodes();
-    sonListe2->printNodes();
-
-    cout << "\n ekrana yazdırıldı yeniler";
-
-    // Bellek sızıntısını önlemek için geçici listeleri sil
-    delete yeniGenList1;
-    delete yeniGenList2;
 }
+GenList::GenList(const GenList &diger)
+{
+    head = NULL; /* burada kaldın */
+    size = 0;
+
+    if (diger.size > 0)
+    {
+        GenNode *itr = diger.head;
+        for (int i = 0; i < diger.size; i++)
+        {
+            add(itr->data);
+            itr = itr->next;
+        }
+        head->prev = itr->prev; // Son elemanın prev'ini başa bağla
+        itr->prev->next = head;
+    }
+
+} /*  // Caprazlama fonksiyonu bitti sanırım
+ void GenList::Caprazlama(GenList *list1, GenList *list2, KromozomList &kromozomList)
+ {
+     int orta1 = list1->Count() / 2;
+     int orta2 = list2->Count() / 2;
+     // Yeni GenList nesnelerini oluştur
+     GenList *yeniGenList1 = new GenList();
+     GenList *yeniGenList2 = new GenList();
+     // Listelerin yarılarını al
+     lftItr(list1, orta1, yeniGenList1); // List 1'in sol yarısını al
+     rgtItr(list2, orta2, yeniGenList1); // List 2'nin sağ yarısını al
+
+     rgtItr(list1, orta1, yeniGenList2); // List 1'in sağ yarısını al
+     lftItr(list2, orta2, yeniGenList2); // List 2'nin sol yarısını al
+
+     // İki yeni listeyi birleştir
+     GenList *sonListe1 = new GenList();
+     mergeLists(*yeniGenList1, *yeniGenList2, sonListe1);
+
+     GenList *sonListe2 = new GenList();
+     mergeLists(*yeniGenList1, *yeniGenList2, sonListe2);
+
+     // Sonuçları kromozomList'e ekle
+     kromozomList.add(sonListe1);
+     kromozomList.add(sonListe2);
+
+     // Sonuçları yazdır
+     cout << "yazdırma ya çalışmıyor ya da birleştirmelerde sıkıntı var";
+
+     sonListe1->printNodes();
+     sonListe2->printNodes();
+
+     cout << "\n ekrana yazdırıldı yeniler";
+
+     // Bellek sızıntısını önlemek için geçici listeleri sil
+     delete yeniGenList1;
+     delete yeniGenList2;
+ }*/
+/*  bu çaprazlamaya gerek yok sanırım
 
 // Sağ iteratörü: Sağ yarıyı almak için
 GenList *GenList::rgtItr(GenList *list, int halflength, GenList *yeniList) throw(NoSuchElement)
 {
-    GenNode *itr = list->FindPreviousByPosition(halflength + 1); // Orta noktadan sonra başlayan iteratör
+GenNode *itr = list->FindPreviousByPosition(halflength + 1); // Orta noktadan sonra başlayan iteratör
 
-    for (int i = 0; i < halflength; ++i)
-    {
-        yeniList->add(itr->data); // Mevcut düğümün verisini ekle
-        itr = itr->next;          // Sağa ilerle
-    }
+for (int i = 0; i < halflength; ++i)
+{
+    yeniList->add(itr->data); // Mevcut düğümün verisini ekle
+    itr = itr->next;          // Sağa ilerle
+}
 
-    return yeniList;
+return yeniList;
 }
 
 // Sol iteratörü: Sol yarıyı almak için
 GenList *GenList::lftItr(GenList *list, int halflength, GenList *yeniList) throw(NoSuchElement)
 {
-    GenNode *itr = list->FindPreviousByPosition(halflength); // Orta noktaya kadar ilerleyen iteratör
+GenNode *itr = list->FindPreviousByPosition(halflength); // Orta noktaya kadar ilerleyen iteratör
 
-    for (int i = 0; i < halflength; ++i)
-    {
-        yeniList->add(itr->data); // Mevcut düğümün verisini ekle
-        itr = itr->prev;          // Sola ilerle
-    }
-    return yeniList;
+for (int i = 0; i < halflength; ++i)
+{
+    yeniList->add(itr->data); // Mevcut düğümün verisini ekle
+    itr = itr->prev;          // Sola ilerle
+}
+return yeniList;
 }
 
 // Listeleri birleştiren fonksiyon
 GenList *GenList::mergeLists(GenList &rgtList, GenList &lftList, GenList *sonListe) throw(NoSuchElement)
 {
-    // Eğer her iki liste de boş değilse
-    if (!rgtList.isEmpty() && !lftList.isEmpty())
-    {
-        // Sağ listenin başını son listeye ekle
-        sonListe->head = rgtList.head;
+// Eğer her iki liste de boş değilse
+if (!rgtList.isEmpty() && !lftList.isEmpty())
+{
+    // Sağ listenin başını son listeye ekle
+    sonListe->head = rgtList.head;
 
-        // Sağ listenin sonunu (prev) sol listenin başına bağla
-        rgtList.head->prev = lftList.head->prev; // Sağ listenin sonunu sol listenin sonuna bağla
-        lftList.head->prev->next = rgtList.head; // Sol listenin sonunu sağ listenin başına bağla
+    // Sağ listenin sonunu (prev) sol listenin başına bağla
+    rgtList.head->prev = lftList.head->prev; // Sağ listenin sonunu sol listenin sonuna bağla
+    lftList.head->prev->next = rgtList.head; // Sol listenin sonunu sağ listenin başına bağla
 
-        // Sol listenin başını son listeye ekle
-        lftList.head->prev = rgtList.head->prev; // Sol listenin sonunu sağ listenin sonuna bağla
-        rgtList.head->prev->next = lftList.head; // Sağ listenin sonunu sol listenin başına bağla
-    }
-    else if (!rgtList.isEmpty()) // Eğer sadece sağ liste doluysa
-    {
-        sonListe->head = rgtList.head;
-        rgtList.head->prev = rgtList.head; // Sağ listenin sonunu kendisine bağla
-    }
-    else if (!lftList.isEmpty()) // Eğer sadece sol liste doluysa
-    {
-        sonListe->head = lftList.head;
-        lftList.head->prev = lftList.head; // Sol listenin sonunu kendisine bağla
-    }
-    else // Her iki liste de boşsa
-    {
-        sonListe->head = NULL; // Son liste de boş
-    }
-
-    // Döngüsel bağlantı kurma (Circular Doubly Linked List)
-    if (sonListe->head != NULL)
-    {
-        GenNode *firstNode = sonListe->head;
-        GenNode *lastNode = firstNode->prev; // İlk düğümün öncesi son düğüm
-        firstNode->prev = lastNode;          // İlk düğümün öncesini son düğüm yap
-        lastNode->next = firstNode;          // Son düğümün sonrasını ilk düğüm yap
-    }
-
-    // Birleştirilen listeyi döndür
-    return sonListe;
+    // Sol listenin başını son listeye ekle
+    lftList.head->prev = rgtList.head->prev; // Sol listenin sonunu sağ listenin sonuna bağla
+    rgtList.head->prev->next = lftList.head; // Sağ listenin sonunu sol listenin başına bağla
 }
+else if (!rgtList.isEmpty()) // Eğer sadece sağ liste doluysa
+{
+    sonListe->head = rgtList.head;
+    rgtList.head->prev = rgtList.head; // Sağ listenin sonunu kendisine bağla
+}
+else if (!lftList.isEmpty()) // Eğer sadece sol liste doluysa
+{
+    sonListe->head = lftList.head;
+    lftList.head->prev = lftList.head; // Sol listenin sonunu kendisine bağla
+}
+else // Her iki liste de boşsa
+{
+    sonListe->head = NULL; // Son liste de boş
+}
+
+// Döngüsel bağlantı kurma (Circular Doubly Linked List)
+if (sonListe->head != NULL)
+{
+    GenNode *firstNode = sonListe->head;
+    GenNode *lastNode = firstNode->prev; // İlk düğümün öncesi son düğüm
+    firstNode->prev = lastNode;          // İlk düğümün öncesini son düğüm yap
+    lastNode->next = firstNode;          // Son düğümün sonrasını ilk düğüm yap
+}
+
+// Birleştirilen listeyi döndür
+return sonListe;
+}
+
+if (!foundSmaller)
+{
+    cout << firstElement << " "; // İlk elemanı yazdır
+}
+} */
 
 void GenList::yazdir()
 {
@@ -144,11 +169,6 @@ void GenList::yazdir()
             foundSmaller = true;
             break;
         }
-    }
-
-    if (!foundSmaller)
-    {
-        cout << firstElement << " "; // İlk elemanı yazdır
     }
 }
 
@@ -195,13 +215,19 @@ const char &GenList::first() throw(NoSuchElement)
     if (isEmpty())
         throw NoSuchElement("No Such Element");
     return head->data;
-} /* silincek hiç kullanılmamış
- const char &GenList::last() throw(NoSuchElement)
- {
-     if (isEmpty())
-         throw NoSuchElement("No Such Element");
-     return head->prev->data;
- } */
+}
+
+/* silincek hiç kullanılmamış
+const char &GenList::last() throw(NoSuchElement)
+{
+   if (isEmpty())
+       throw NoSuchElement("No Such Element");
+   return head->prev->data;
+} */
+GenNode *GenList::firstNode() const
+{
+    return head;
+}
 int GenList::indexOf(const char &item) throw(NoSuchElement)
 {
     int index = 0;

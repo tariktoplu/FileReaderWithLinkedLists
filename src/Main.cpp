@@ -55,7 +55,8 @@ int ReadFile(KromozomList *kromozomlar)
 		return 1; // Hata durumunda 1 döndür
 	}
 	return 0; // Başarılı bir şekilde okuma yapıldıysa 0 döndür
-} */int ReadFile(KromozomList *kromozomlar)
+} */
+int ReadFile(KromozomList *kromozomlar)
 {
 	try
 	{
@@ -85,7 +86,7 @@ int ReadFile(KromozomList *kromozomlar)
 			{
 				if (c == '\n' || c == '\r') // Yeni satır varsa listeyi ekle
 				{
-					kromozomlar->add(currentList);
+					kromozomlar->add(*currentList);
 					currentList = new GenList(); // Yeni GenList başlat
 
 					// Windows'ta \r\n kontrolü
@@ -102,7 +103,7 @@ int ReadFile(KromozomList *kromozomlar)
 		}
 
 		// Son listeyi ekle
-		kromozomlar->add(currentList);
+		kromozomlar->add(*currentList);
 
 		filebuf.close();
 

@@ -144,7 +144,76 @@ void KromozomList::yazdir()
     }
     cout << endl;
 }
-/* bu çaprazlama bitti gibi */
+void KromozomList::Caprazlama(int index1, int index2)
+{
+    if (index1 < 0 || index1 >= size || index2 < 0 || index2 >= size)
+    {
+        throw NoSuchElement("Invalid index for crossover.");
+    }
+    /*
+        // Kromozomları bul
+        KromozomNode *kromozom1 = FindFromNodeByPosition(index1);
+        KromozomNode *kromozom2 = FindFromNodeByPosition(index2);
+
+        if (kromozom1 == nullptr || kromozom2 == nullptr)
+        {
+            throw NoSuchElement("Kromozom not found.");
+        } */
+
+    KromozomNode *kromozom1 = head;
+    KromozomNode *kromozom2 = head;
+
+    for (int i = 0; i < index1; i++)
+        kromozom1 = kromozom1->next;
+    for (int i = 0; i < index2; i++)
+        kromozom2 = kromozom2->next;
+    // Yeni gen listelerini oluştur
+    GenList *caprazlananGenList1 = new GenList();
+    GenList *caprazlananGenList2 = new GenList();
+
+    // Orta noktaları hesapla
+    int orta1 = kromozom1->genList->Count() / 2;
+    int orta2 = kromozom2->genList->Count() / 2;
+
+    GenNode *itr = kromozom1->genList->firstNode();
+    for (int i = 0; i < orta1; i++)
+    {
+        caprazlananGenList1->add(itr->data);
+        itr = itr->next;
+    }
+
+    itr = kromozom2->genList->firstNode();
+    for (int i = 0; i < orta2; i++)
+        itr = itr->next;
+    for (int i = orta2; i < kromozom2->genList->Count(); i++)
+    {
+        caprazlananGenList1->add(itr->data);
+        itr = itr->next;
+    }
+
+    itr = kromozom2->genList->firstNode();
+    for (int i = 0; i < orta2; i++)
+    {
+        caprazlananGenList2->add(itr->data);
+        itr = itr->next;
+    }
+
+    itr = kromozom1->genList->firstNode();
+    for (int i = 0; i < orta1; i++)
+        itr = itr->next;
+    for (int i = orta1; i < kromozom1->genList->Count(); i++)
+    {
+        caprazlananGenList2->add(itr->data);
+        itr = itr->next;
+    }
+
+    this->add(*caprazlananGenList1);
+    this->add(*caprazlananGenList2);
+
+    delete caprazlananGenList1;
+    delete caprazlananGenList2;
+}
+/* bu çaprazlama bitti gibi
 void KromozomList::Caprazlama(int index1, int index2)
 {
     if (index1 < 0 || index1 >= size || index2 < 0 || index2 >= size)
@@ -197,11 +266,11 @@ void KromozomList::Caprazlama(int index1, int index2)
     }
 
     // Yeni kromozomları popülasyona ekle
-    add(newGenList1);
-    add(newGenList2);
+    add(*newGenList1);
+    add(*newGenList2);
     newGenList1->printNodes();
     newGenList2->printNodes();
-}
+} */
 
 /* void Mutasyon(int index, int column)
 {
@@ -245,75 +314,6 @@ void KromozomList::Mutasyon(int index, int column)
     // Geni değiştirdikten sonra, gen listesini yazdır
     genList->printNodes();
 }
-/* KromozomNode *FindNodeByPosition(int index)
-{
-    if (index < 0 || index >= size)
-        throw NoSuchElement("No Such Element");
-
-    // Liste boyutunun çeyrekleri
-    int quarter = size / 4;
-    int mid = size / 2;
-    int threeQuarter = 3 * quarter;
-
-    KromozomNode *itr;
-    int steps;
-
-    // İlk çeyrek
-    if (index < quarter)
-    {
-        itr = head;
-        for (int i = 0; i < index; i++)
-        {
-            itr = itr->next;
-        }
-    }
-    // İkinci çeyrek
-    else if (index < mid)
-    {
-        // quarterNode'dan başla (zaten elimizde var)
-        itr = quarterNode; // Artık head'den başlamıyoruz!
-        for (int i = quarter; i < index; i++)
-        {
-            itr = itr->next;
-        }
-    }
-    // Üçüncü çeyrek
-    else if (index < threeQuarter)
-    {
-        // midNode'dan başla (zaten elimizde var)
-        itr = midNode; // Artık head'den başlamıyoruz!
-        for (int i = mid; i < index; i++)
-        {
-            itr = itr->next;
-        }
-    }
-    // Son çeyrek
-    else
-    {
-        // threeQuarterNode'dan başla veya sondan yaklaşalım
-        if (index - threeQuarter < size - index)
-        {
-            // 3/4 noktasından başlamak daha yakınsa
-            itr = threeQuarterNode; // Artık head'den başlamıyoruz!
-            for (int i = threeQuarter; i < index; i++)
-            {
-                itr = itr->next;
-            }
-        }
-        else
-        {
-            // Sondan başlamak daha yakınsa
-            itr = head->prev;
-            for (int i = size - 1; i > index; i--)
-            {
-                itr = itr->prev;
-            }
-        }
-    }
-
-    return itr;
-} */
-
 KromozomNode *KromozomList::FindFromNodeByPosition(int index)
 {
     if (index < 0 || index >= size)
@@ -405,24 +405,23 @@ bool KromozomList::isEmpty() const
     return size == 0;
 }
 
-void KromozomList::add(GenList *genList) throw(NoSuchElement)
+void KromozomList::add(const GenList &genList) throw(NoSuchElement)
 {
-    if (size == 0) // Liste boşsa
+    GenList *yeniGenList = new GenList(genList);
+    KromozomNode *yeniDugum = new KromozomNode(yeniGenList);
+
+    if (size == 0)
     {
-        head = new KromozomNode();
-        head->genList = genList;
+        head = yeniDugum;
         head->next = head->prev = head;
     }
-    else // Liste doluysa, en sona ekle
-    {
-        KromozomNode *last = head->prev;                      // Son düğümü bul
-        KromozomNode *newNode = new KromozomNode(head, last); // Yeni düğüm oluştur ve son düğümün arkasına ekle
-        newNode->genList = genList;
-        last->next = newNode;
-        head->prev = newNode;
-    }
-    size++;
+    KromozomNode *last = head->prev;
+    last->next = yeniDugum;
+    yeniDugum->prev = last;
+    yeniDugum->next = head;
+    head->prev = yeniDugum;
 
+    size++;
     if (size % 100 == 0)
     {
         updateReferencePoints();
@@ -460,19 +459,8 @@ void KromozomList::clear()
 {
     while (!isEmpty())
     {
-        cout << "KromozomList yıkıcısı calısıyor bu yazı her satır için yazdırılmalı" << endl;
         removeAt(0);
     }
-}
-ostream &operator<<(ostream &screen, KromozomList &rgt)
-{
-    int index = 0;
-    for (KromozomNode *itr = rgt.head; index < rgt.size; itr = itr->next, index++)
-    {
-        screen << *(itr->genList) << " <-> "; /* yazabilir emin değilim */
-    }
-    screen << endl;
-    return screen;
 }
 KromozomList::~KromozomList()
 {

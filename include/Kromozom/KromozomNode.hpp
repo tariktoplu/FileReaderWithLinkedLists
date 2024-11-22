@@ -14,8 +14,7 @@ public:
 	KromozomNode *next;
 	KromozomNode *prev;
 
-	KromozomNode(KromozomNode *next = NULL, KromozomNode *prev = NULL);
-	~KromozomNode();
+	KromozomNode(GenList *genList = nullptr, KromozomNode *next = nullptr, KromozomNode *prev = nullptr);
 	GenList *getGeneList() const;
 };
 

@@ -18,6 +18,7 @@ private:
 
 public:
     GenList();
+    GenList(const GenList &);
     void Caprazlama(GenList *, GenList *, KromozomList &);
 
     void yazdir();
@@ -26,6 +27,7 @@ public:
     void add(const char &);
     void insert(int, const char &) throw(NoSuchElement);
     const char &first() throw(NoSuchElement);
+    GenNode *firstNode() const;
     const char &last() throw(NoSuchElement);
     int indexOf(const char &) throw(NoSuchElement);
     void remove(const char &);
