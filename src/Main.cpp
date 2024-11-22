@@ -56,6 +56,7 @@ int ReadFile(KromozomList *kromozomlar)
 	}
 	return 0; // Başarılı bir şekilde okuma yapıldıysa 0 döndür
 } */
+/*
 int ReadFile(KromozomList *kromozomlar)
 {
 	try
@@ -118,7 +119,7 @@ int ReadFile(KromozomList *kromozomlar)
 		return 1;
 	}
 	return 0;
-}
+} */
 // Kullanıcıdan seçim alma ve işlemleri gerçekleştirme fonksiyonu
 void handleUserChoice(KromozomList *kromozomlar)
 {
@@ -196,10 +197,28 @@ int main()
 	KromozomList *kromozomlar = new KromozomList(); // KromozomList nesnesi oluştur
 
 	// Dosyadan verileri oku
-	if (ReadFile(kromozomlar) != 0)
+	ifstream dnaDosyasi("Dna.txt");
+	string satir;
+	if (dnaDosyasi.is_open())
 	{
-		delete kromozomlar;
-		return 1; // Okuma hatası varsa çık
+		while (getline(dnaDosyasi, satir))
+		{
+			GenList *genList = new GenList();
+			for (char gen : satir)
+			{
+				if (gen != ' ')
+				{
+					genList->add(gen);
+				}
+			}
+			kromozomlar->add(*genList);
+			delete genList;
+		}
+		dnaDosyasi.close();
+	}
+	else
+	{
+		cerr << "DNA dosyasi acilamadi!" << endl;
 	}
 
 	// Kullanıcıdan seçim al ve işlemleri gerçekleştir

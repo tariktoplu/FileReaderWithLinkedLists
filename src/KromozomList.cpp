@@ -404,22 +404,27 @@ bool KromozomList::isEmpty() const
 {
     return size == 0;
 }
-
 void KromozomList::add(const GenList &genList) throw(NoSuchElement)
 {
     GenList *yeniGenList = new GenList(genList);
     KromozomNode *yeniDugum = new KromozomNode(yeniGenList);
 
-    if (size == 0)
+    if (size == 0) // Liste boşsa
     {
         head = yeniDugum;
-        head->next = head->prev = head;
+        head->next = head; // Kendisine bağla
+        head->prev = head; // Kendisine bağla
     }
-    KromozomNode *last = head->prev;
-    last->next = yeniDugum;
-    yeniDugum->prev = last;
-    yeniDugum->next = head;
-    head->prev = yeniDugum;
+    else // Liste doluysa
+    {
+        KromozomNode *last = head->prev; // Son düğümü bul (tail yerine)
+
+        // Yeni düğümü sona ekle
+        last->next = yeniDugum;
+        yeniDugum->prev = last;
+        yeniDugum->next = head;
+        head->prev = yeniDugum;
+    }
 
     size++;
     if (size % 100 == 0)
