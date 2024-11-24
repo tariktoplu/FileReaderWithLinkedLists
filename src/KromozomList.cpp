@@ -30,7 +30,7 @@ void KromozomList::processCommands(KromozomList &kromozomlar)
         // Komut karakterini oku
         if (!(iss >> command))
         {
-            continue; // Eğer komut okunamazsa, bu satırı atla
+            continue;
         }
 
         // Komut karakterine göre işlemleri yap
@@ -234,8 +234,6 @@ void KromozomList::Mutasyon(int kromozomIndex, int genIndex)
     }
 
     genDugum->data = 'X'; // Gen değerini "X" olarak değiştir
-
-    cout << "Mutasyon işlemi başarılı! Kromozom güncellendi." << endl;
 }
 
 KromozomNode *KromozomList::FindFromNodeByPosition(int index)
