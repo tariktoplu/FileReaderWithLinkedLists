@@ -19,28 +19,34 @@ void GenList::Caprazlama(GenList *list1, GenList *list2, KromozomList &kromozomL
 {
     int orta1 = list1->Count() / 2;
     int orta2 = list2->Count() / 2;
+    // Yeni GenList nesnelerini oluştur
+    GenList *yeniGenList1 = new GenList();
+    GenList *yeniGenList2 = new GenList();
+    // Listelerin yarılarını al
+    lftItr(list1, orta1, yeniGenList1); // List 1'in sol yarısını al
+    rgtItr(list2, orta2, yeniGenList1); // List 2'nin sağ yarısını al
 
+    rgtItr(list1, orta1, yeniGenList2); // List 1'in sağ yarısını al
+    lftItr(list2, orta2, yeniGenList2); // List 2'nin sol yarısını al
+
+    // İki yeni listeyi birleştir
     GenList *sonListe1 = new GenList();
-
-    GenList *yeniGenList1;
-    GenList *yeniGenList2;
-
-    lftItr(list1, orta1, yeniGenList1);
-    rgtItr(list2, orta2, yeniGenList1); // list 2 nin Sağ yarıyı al
-
-    rgtItr(list1, orta1, yeniGenList2); // Sol yarıyı al
-    lftItr(list2, orta2, yeniGenList2);
-
     mergeLists(*yeniGenList1, *yeniGenList2, sonListe1);
 
     GenList *sonListe2 = new GenList();
+    mergeLists(*yeniGenList1, *yeniGenList2, sonListe2);
 
-    // sonListe1 ve sonListe2'yi kromozomList'e ekle
+    // Sonuçları kromozomList'e ekle
     kromozomList.add(sonListe1);
     kromozomList.add(sonListe2);
 
+    // Sonuçları yazdır
+    cout << "yazdırma ya çalışmıyor ya da birleştirmelerde sıkıntı var";
+
     sonListe1->printNodes();
     sonListe2->printNodes();
+
+    cout << "\n ekrana yazdırıldı yeniler";
 
     // Bellek sızıntısını önlemek için geçici listeleri sil
     delete yeniGenList1;
@@ -49,7 +55,7 @@ void GenList::Caprazlama(GenList *list1, GenList *list2, KromozomList &kromozomL
 
 // Sağ iteratörü: Sağ yarıyı almak için
 GenList *GenList::rgtItr(GenList *list, int halflength, GenList *yeniList) throw(NoSuchElement)
-{                                                                /* yukarıda oluşturduğum gecici listeyi passleyebilirim */
+{
     GenNode *itr = list->FindPreviousByPosition(halflength + 1); // Orta noktadan sonra başlayan iteratör
 
     for (int i = 0; i < halflength; ++i)
@@ -59,13 +65,11 @@ GenList *GenList::rgtItr(GenList *list, int halflength, GenList *yeniList) throw
     }
 
     return yeniList;
-    /* bu çöp olarak kaldı olmaz !!!!!!!!!! */
 }
 
 // Sol iteratörü: Sol yarıyı almak için
 GenList *GenList::lftItr(GenList *list, int halflength, GenList *yeniList) throw(NoSuchElement)
 {
-
     GenNode *itr = list->FindPreviousByPosition(halflength); // Orta noktaya kadar ilerleyen iteratör
 
     for (int i = 0; i < halflength; ++i)

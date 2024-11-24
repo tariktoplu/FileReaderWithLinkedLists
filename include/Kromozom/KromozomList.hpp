@@ -32,7 +32,7 @@ public:
 	int Count() const;
 	bool isEmpty() const;
 	void add(GenList *) throw(NoSuchElement);
-	void removeAt() throw(NoSuchElement);
+	void removeAt(int) throw(NoSuchElement);
 	void clear();
 	friend ostream &operator<<(ostream &, KromozomList &);
 	~KromozomList();
