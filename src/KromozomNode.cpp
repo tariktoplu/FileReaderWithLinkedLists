@@ -1,16 +1,8 @@
 #include "../include/Kromozom/KromozomNode.hpp"
 #include "../include/Gen/GenList.hpp"
-KromozomNode::KromozomNode(KromozomNode *next, KromozomNode *prev)
+KromozomNode::KromozomNode(GenList *genList, KromozomNode *next, KromozomNode *prev)
 {
-    this->genList = new GenList();
-    this->next = next;
+    this->genList = genList; // GenList'i ata
     this->prev = prev;
-}
-KromozomNode::~KromozomNode()
-{
-    delete genList;
-}
-GenList *KromozomNode::getGeneList() const
-{
-    return genList;
+    this->next = next;
 }

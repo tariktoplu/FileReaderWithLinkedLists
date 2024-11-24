@@ -124,15 +124,19 @@ void KromozomList::updateReferencePoints()
 
 KromozomNode *KromozomList::FindPreviousByPosition(int index)
 {
-    KromozomNode *prv = head;
-    int i = 1;
-    for (KromozomNode *itr = head; i != index; itr = itr->next, i++)
-    {
-        prv = prv->next;
-    }
-    return prv;
-}
+    if (index <= 0 || index > size) // Geçersiz indeks kontrolü
+        throw NoSuchElement("No Such Element");
 
+    KromozomNode *current = head;
+
+    // Circular doubly linked list olduğu için, head'e dönebiliriz
+    for (int i = 0; i < index - 1; i++)
+    {
+        current = current->next; // Sonraki düğüme geç
+    }
+
+    return current; // Önceki düğümü döndür
+}
 void KromozomList::yazdir()
 {
     KromozomNode *current = head;
@@ -144,175 +148,95 @@ void KromozomList::yazdir()
     }
     cout << endl;
 }
-/* bu çaprazlama bitti gibi */
 void KromozomList::Caprazlama(int index1, int index2)
 {
-    if (index1 < 0 || index1 >= size || index2 < 0 || index2 >= size)
+    if (index1 < 0 || index2 >= size || index2 < 0 || index2 >= size)
+        throw "Hatali Konum Bilgisi";
+
+    KromozomNode *kromozom1 = head;
+    KromozomNode *kromozom2 = head;
+
+    for (int i = 0; i < index1; i++)
+        kromozom1 = kromozom1->next;
+    for (int i = 0; i < index2; i++)
+        kromozom2 = kromozom2->next;
+
+    GenList *caprazlananKromozom1 = new GenList();
+    GenList *caprazlananKromozom2 = new GenList();
+
+    int orta1 = kromozom1->genList->Count() / 2;
+    int orta2 = kromozom2->genList->Count() / 2;
+
+    GenNode *gezici = kromozom1->genList->first();
+    for (int i = 0; i < orta1; i++)
     {
-        throw NoSuchElement("Invalid index for crossover.");
+        caprazlananKromozom1->add(gezici->data);
+        gezici = gezici->next;
     }
 
-    KromozomNode *kromozom1 = FindFromNodeByPosition(index1);
-    KromozomNode *kromozom2 = FindFromNodeByPosition(index2);
-
-    if (kromozom1 == nullptr || kromozom2 == nullptr)
+    gezici = kromozom2->genList->first();
+    for (int i = 0; i < orta2; i++)
+        gezici = gezici->next;
+    for (int i = orta2; i < kromozom2->genList->Count(); i++)
     {
-        throw NoSuchElement("Kromozom not found.");
+        caprazlananKromozom1->add(gezici->data);
+        gezici = gezici->next;
     }
 
-    GenList *genList1 = kromozom1->genList;
-    GenList *genList2 = kromozom2->genList;
-
-    // İlk kromozomun orta noktası
-    int mid1 = genList1->Count() / 2;
-    // İkinci kromozomun orta noktası
-    int mid2 = genList2->Count() / 2;
-
-    // Yeni kromozomları oluştur
-    GenList *newGenList1 = new GenList();
-    GenList *newGenList2 = new GenList();
-
-    // Kromozom 1'in sol tarafı ve Kromozom 2'nin sağ tarafı
-    for (int i = 0; i < mid1; i++)
+    gezici = kromozom2->genList->first();
+    for (int i = 0; i < orta2; i++)
     {
-        GenNode *node = genList1->FindGenNodeByPosition(i); // Kromozom 1'in baştan mid1'e kadar olan genleri
-        newGenList1->add(node->data);                       // Yeni gen listesine ekle
-    }
-    for (int i = mid2; i < genList2->Count(); i++)
-    {
-        GenNode *node = genList2->FindGenNodeByPosition(i); // Kromozom 2'nin mid2'den sona kadar olan genleri
-        newGenList1->add(node->data);                       // Yeni gen listesine ekle
+        caprazlananKromozom2->add(gezici->data);
+        gezici = gezici->next;
     }
 
-    // Kromozom 1'in sağ tarafı ve Kromozom 2'nin sol tarafı
-    for (int i = mid1; i < genList1->Count(); i++)
+    gezici = kromozom1->genList->first();
+    for (int i = 0; i < orta1; i++)
+        gezici = gezici->next;
+    for (int i = orta1; i < kromozom1->genList->Count(); i++)
     {
-        GenNode *node = genList1->FindGenNodeByPosition(i); // Kromozom 1'in mid1'den sona kadar olan genleri
-        newGenList2->add(node->data);                       // Yeni gen listesine ekle
-    }
-    for (int i = 0; i < mid2; i++)
-    {
-        GenNode *node = genList2->FindGenNodeByPosition(i); // Kromozom 2'nin baştan mid2'ye kadar olan genleri
-        newGenList2->add(node->data);                       // Yeni gen listesine ekle
+        caprazlananKromozom2->add(gezici->data);
+        gezici = gezici->next;
     }
 
-    // Yeni kromozomları popülasyona ekle
-    add(newGenList1);
-    add(newGenList2);
-    newGenList1->printNodes();
-    newGenList2->printNodes();
+    this->add(*caprazlananKromozom1);
+    this->add(*caprazlananKromozom2);
+
+    delete caprazlananKromozom1;
+    delete caprazlananKromozom2;
 }
-
-/* void Mutasyon(int index, int column)
+void KromozomList::Mutasyon(int kromozomIndex, int genIndex)
 {
-    if (index < 0 || column >= size)
+    if (kromozomIndex < 0 || kromozomIndex >= size)
     {
-        throw NoSuchElement("Invalid kromozom index for mutation.");
+        throw "Kromozom indeksi geçersiz!";
     }
-    KromozomNode *kromozomNode = FindPreviousByPosition(index);
-    GenList *genList = kromozomNode->genList; /* gen listesini çekti pointera  */
 
-/* if (column < 0 || column >= genList->Count())
-{
-    throw NoSuchElement("Invalid gen index for mutation.");
+    KromozomNode *kromozom = head;
+    for (int i = 0; i < kromozomIndex; i++)
+    {
+        kromozom = kromozom->next;
+    }
+
+    // Kromozom içindeki gen listesini al
+    GenList *genListe = kromozom->genList;
+
+    if (genIndex < 0 || genIndex >= genListe->Count())
+    {
+        throw "Gen indeksi geçersiz!";
+    }
+
+    // Belirtilen genin değerini "X" olarak değiştir
+    GenNode *genDugum = genListe->first();
+    for (int i = 0; i < genIndex; i++)
+    {
+        genDugum = genDugum->next;
+    }
+
+    genDugum->data = 'X'; // Gen değerini "X" olarak değiştir
+
+    cout << "Mutasyon işlemi başarılı! Kromozom güncellendi." << endl;
 }
-
-GenNode *genNode = genList->FindNodeByPosition(index);
-genNode->data = 'X';
- */
-
-/* mutasyon blackboxtan duzenlenecek */
-void KromozomList::Mutasyon(int index, int column)
-{
-    if (index < 0 || index >= size)
-    {
-        throw NoSuchElement("Invalid kromozom index for mutation.");
-    }
-
-    // Kromozom düğümünü bul
-    KromozomNode *kromozomNode = FindFromNodeByPosition(index);
-    GenList *genList = kromozomNode->genList;
-
-    if (column < 0 || column >= genList->Count())
-    {
-        throw NoSuchElement("Invalid gen index for mutation.");
-    }
-
-    // Gen düğümünü bul ve mutasyon yap
-    GenNode *genNode = genList->FindGenNodeByPosition(column); // column parametresi ile genNode'u buluyoruz
-    genNode->data = 'X';                                       // Geni mutasyona uğrat (örneğin, verisini 'X' olarak değiştir)
-
-    // Geni değiştirdikten sonra, gen listesini yazdır
-    genList->printNodes();
-}
-/* KromozomNode *FindNodeByPosition(int index)
-{
-    if (index < 0 || index >= size)
-        throw NoSuchElement("No Such Element");
-
-    // Liste boyutunun çeyrekleri
-    int quarter = size / 4;
-    int mid = size / 2;
-    int threeQuarter = 3 * quarter;
-
-    KromozomNode *itr;
-    int steps;
-
-    // İlk çeyrek
-    if (index < quarter)
-    {
-        itr = head;
-        for (int i = 0; i < index; i++)
-        {
-            itr = itr->next;
-        }
-    }
-    // İkinci çeyrek
-    else if (index < mid)
-    {
-        // quarterNode'dan başla (zaten elimizde var)
-        itr = quarterNode; // Artık head'den başlamıyoruz!
-        for (int i = quarter; i < index; i++)
-        {
-            itr = itr->next;
-        }
-    }
-    // Üçüncü çeyrek
-    else if (index < threeQuarter)
-    {
-        // midNode'dan başla (zaten elimizde var)
-        itr = midNode; // Artık head'den başlamıyoruz!
-        for (int i = mid; i < index; i++)
-        {
-            itr = itr->next;
-        }
-    }
-    // Son çeyrek
-    else
-    {
-        // threeQuarterNode'dan başla veya sondan yaklaşalım
-        if (index - threeQuarter < size - index)
-        {
-            // 3/4 noktasından başlamak daha yakınsa
-            itr = threeQuarterNode; // Artık head'den başlamıyoruz!
-            for (int i = threeQuarter; i < index; i++)
-            {
-                itr = itr->next;
-            }
-        }
-        else
-        {
-            // Sondan başlamak daha yakınsa
-            itr = head->prev;
-            for (int i = size - 1; i > index; i--)
-            {
-                itr = itr->prev;
-            }
-        }
-    }
-
-    return itr;
-} */
 
 KromozomNode *KromozomList::FindFromNodeByPosition(int index)
 {
@@ -371,7 +295,7 @@ KromozomNode *KromozomList::FindFromNodeByPosition(int index)
         }
         else
         {
-            start = head->prev; /* buradaki taili head->prev olarak değiştirdim*/
+            start = head->prev;
             steps = size - 1 - index;
         }
     }
@@ -405,22 +329,27 @@ bool KromozomList::isEmpty() const
     return size == 0;
 }
 
-void KromozomList::add(GenList *genList) throw(NoSuchElement)
+void KromozomList::add(const GenList &genList) throw(NoSuchElement)
 {
-    if (size == 0) // Liste boşsa
+    GenList *yeniGenList = new GenList(genList);
+    KromozomNode *yeniDugum = new KromozomNode(yeniGenList);
+
+    if (size == 0)
     {
-        head = new KromozomNode();
-        head->genList = genList;
-        head->next = head->prev = head;
+        // Liste boşsa, yeni düğüm kendisine işaret eder
+        yeniDugum->next = yeniDugum;
+        yeniDugum->prev = yeniDugum;
+        head = yeniDugum; // Yeni düğüm baş düğüm oldu
     }
-    else // Liste doluysa, en sona ekle
+    else
     {
-        KromozomNode *last = head->prev;                      // Son düğümü bul
-        KromozomNode *newNode = new KromozomNode(head, last); // Yeni düğüm oluştur ve son düğümün arkasına ekle
-        newNode->genList = genList;
-        last->next = newNode;
-        head->prev = newNode;
+        // Liste doluysa, yeni düğüm başa eklenir
+        yeniDugum->next = head;
+        yeniDugum->prev = head->prev; // Yeni düğümün önceki düğümünü ayarla
+        head->prev->next = yeniDugum; // Eski başın önceki düğümü yeni düğüme bağla
+        head->prev = yeniDugum;       // Eski başın önceki düğümünü yeni düğüme bağla
     }
+
     size++;
 
     if (size % 100 == 0)
@@ -428,33 +357,43 @@ void KromozomList::add(GenList *genList) throw(NoSuchElement)
         updateReferencePoints();
     }
 }
-
 void KromozomList::removeAt(int index) throw(NoSuchElement)
 {
     if (index < 0 || index >= size)
-        throw NoSuchElement("No Such Element");
-    KromozomNode *del;
-    if (index == 0)
     {
+        throw "Index out of Range";
+    }
+
+    KromozomNode *del;
+
+    if (size == 1)
+    {
+        // Eğer sadece bir eleman varsa
         del = head;
-        if (size == 1)
-            head = NULL;
-        else
-        {
-            head = head->next;
-            head->prev = del->prev;
-            del->prev->next = head;
-        }
+        head = nullptr; // Listeyi boşalt
+    }
+    else if (index == 0)
+    {
+        // İlk elemanı silme durumu
+        del = head;
+        head = head->next; // Yeni baş düğüm
+        // Yeni baş düğümün önceki bağlantısını güncelle
+        head->prev = del->prev; // Yeni başın önceki bağlantısını eski başın öncesine ayarla
+        // Eski başın son düğüm ile bağlantısını güncelle
+        del->prev->next = head;
     }
     else
     {
+        // Diğer durumlar
         KromozomNode *prv = FindPreviousByPosition(index);
         del = prv->next;
-        prv->next = del->next;
-        del->next->prev = prv;
+        prv->next = del->next; // Önceki düğümün sonraki bağlantısını güncelle
+        del->next->prev = prv; // Sonraki düğümün önceki bağlantısını güncelle
     }
+
+    delete del->genList; // Kromozom verisini sil
+    delete del;          // Düğümü sil
     size--;
-    delete del;
 }
 void KromozomList::clear()
 {

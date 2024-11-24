@@ -15,16 +15,13 @@ private:
 
 public:
     GenList();
-    void Caprazlama(GenList *, GenList *, KromozomList &);
-    GenList *rgtItr(GenList *, int, GenList *) throw(NoSuchElement);
-    GenList *lftItr(GenList *, int, GenList *) throw(NoSuchElement);
-    GenList *mergeLists(GenList &, GenList &, GenList *) throw(NoSuchElement);
+    GenList(const GenList &);
     void yazdir();
     int Count() const;
     bool isEmpty() const;
     void add(const char &);
     void insert(int, const char &) throw(NoSuchElement);
-    const char &first() throw(NoSuchElement);
+    GenNode *first() const;
     const char &last() throw(NoSuchElement);
     int indexOf(const char &) throw(NoSuchElement);
     void remove(const char &);
@@ -34,9 +31,6 @@ public:
     GenNode *FindGenNodeByPosition(int) throw(NoSuchElement);
     void clear();
     friend ostream &operator<<(ostream &, GenList &);
-    void printNodesFromPositionInReverseOrder(int) throw(NoSuchElement);
-    void printNodes() throw(NoSuchElement);
-    void printReverseOrder();
     ~GenList();
 };
 

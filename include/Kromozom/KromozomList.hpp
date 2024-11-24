@@ -20,18 +20,18 @@ private:
 	int threeQuarterIndex;
 
 	void updateReferencePoints();
-	KromozomNode *FindPreviousByPosition(int);
 
 public:
 	KromozomList();
 	void yazdir();
+	KromozomNode *FindPreviousByPosition(int);
 	void processCommands(KromozomList &);
 	void Caprazlama(int, int);
 	void Mutasyon(int, int);
 	KromozomNode *FindFromNodeByPosition(int);
 	int Count() const;
 	bool isEmpty() const;
-	void add(GenList *) throw(NoSuchElement);
+	void add(const GenList &) throw(NoSuchElement);
 	void removeAt(int) throw(NoSuchElement);
 	void clear();
 	friend ostream &operator<<(ostream &, KromozomList &);
